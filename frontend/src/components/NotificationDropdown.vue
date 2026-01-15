@@ -1,5 +1,11 @@
 <template>
-  <div class="notification-dropdown" v-click-outside="closeDropdown">
+  <!-- Dropdown -->
+  <div 
+    v-if="showDropdown"
+    class="notification-dropdown" 
+    :class="placementClass"
+    v-click-outside="closeDropdown"
+  >
     <div class="dropdown-header">
       <h3>Notificacions</h3>
       <button 
@@ -12,18 +18,12 @@
     </div>
     
     <div class="notifications-list custom-scrollbar">
-      <div 
-        v-if="loading" 
-        class="loading-state"
-      >
+      <div v-if="loading" class="loading-state">
         <div class="spinner"></div>
         <p>Carregant notificacions...</p>
       </div>
       
-      <div 
-        v-else-if="notifications.length === 0" 
-        class="empty-state"
-      >
+      <div v-else-if="notifications.length === 0" class="empty-state">
         <span class="empty-icon">📭</span>
         <p>No tens notificacions</p>
       </div>
@@ -51,9 +51,20 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, defineEmits, defineProps } from 'vue'
 import { useNotificationStore } from '../stores/notificationStore'
 import { useRouter } from 'vue-router'
+
+const props = defineProps({
+    showDropdown: {
+        type: Boolean,
+        default: false
+    },
+    placement: {
+        type: String,
+        default: 'bottom' // 'bottom' | 'top' | 'top-right'
+    }
+})
 
 const emit = defineEmits(['close'])
 const router = useRouter()
@@ -62,6 +73,9 @@ const notificationStore = useNotificationStore()
 const notifications = computed(() => notificationStore.notifications)
 const unreadNotifications = computed(() => notificationStore.unreadNotifications)
 const loading = computed(() => notificationStore.loading)
+
+// Computed class for placement
+const placementClass = computed(() => `placement-${props.placement}`)
 
 function closeDropdown() {
   emit('close')
@@ -82,7 +96,6 @@ function formatTime(timestamp) {
   const date = new Date(timestamp)
   const now = new Date()
   const diff = now - date
-  
   const minutes = Math.floor(diff / 60000)
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
@@ -92,23 +105,12 @@ function formatTime(timestamp) {
   if (hours < 24) return `Fa ${hours}h`
   if (days < 7) return `Fa ${days} dies`
   
-  return date.toLocaleDateString('ca-ES', { 
-    day: 'numeric', 
-    month: 'short' 
-  })
+  return date.toLocaleDateString('ca-ES', { day: 'numeric', month: 'short' })
 }
 
 async function handleNotificationClick(notification) {
-  // Marcar com a llegida
-  if (!notification.llegida) {
-    await notificationStore.markAsRead(notification.id)
-  }
-  
-  // Navegar a la sol·licitud si n'hi ha
-  if (notification.sollicitud_id) {
-    router.push('/mis-solicitudes')
-  }
-  
+  if (!notification.llegida) await notificationStore.markAsRead(notification.id)
+  if (notification.sollicitud_id) router.push('/mis-solicitudes')
   closeDropdown()
 }
 
@@ -116,7 +118,6 @@ async function markAllAsRead() {
   await notificationStore.markAllAsRead()
 }
 
-// Directiva personalitzada per tancar en clicar fora
 const vClickOutside = {
   mounted(el, binding) {
     el.clickOutsideEvent = (event) => {
@@ -132,35 +133,42 @@ const vClickOutside = {
 }
 </script>
 
-<script>
-export default {
-  name: 'NotificationDropdown'
-}
-</script>
-
 <style scoped>
 .notification-dropdown {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  width: 400px;
+  width: 360px;
   max-width: 90vw;
   background: white;
   border-radius: 0.75rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   animation: fadeIn 0.2s ease-out;
+  border: 1px solid #E5E7EB;
+}
+
+/* Placement styles */
+.placement-bottom {
+    top: calc(100% + 0.5rem);
+    right: 0;
+    transform-origin: top right;
+}
+
+.placement-top {
+    bottom: calc(100% + 0.5rem);
+    right: 0;
+    transform-origin: bottom right;
+}
+
+.placement-top-right {
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 0.5rem;
+    transform-origin: bottom left;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .dropdown-header {
@@ -170,47 +178,13 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+.dropdown-header h3 { font-size: 1rem; font-weight: 700; color: #0F172A; margin: 0; }
+.mark-all-btn { color: #3B82F6; font-size: 0.75rem; font-weight: 600; cursor: pointer; background: none; border: none; }
+.mark-all-btn:hover { text-decoration: underline; }
 
-.dropdown-header h3 {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #0F172A;
-  margin: 0;
-}
-
-.mark-all-btn {
-  background: none;
-  border: none;
-  color: #3B82F6;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  transition: background-color 0.2s;
-}
-
-.mark-all-btn:hover {
-  background-color: #EFF6FF;
-}
-
-.notifications-list {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.loading-state,
-.empty-state {
-  padding: 3rem 1rem;
-  text-align: center;
-  color: #6B7280;
-}
-
-.empty-icon {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 0.5rem;
-}
+.notifications-list { max-height: 400px; overflow-y: auto; }
+.empty-state { padding: 2rem; text-align: center; color: #6B7280; }
+.empty-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
 
 .notification-item {
   padding: 1rem;
@@ -219,61 +193,20 @@ export default {
   gap: 0.75rem;
   cursor: pointer;
   transition: background-color 0.2s;
-  position: relative;
 }
-
-.notification-item:hover {
-  background-color: #F9FAFB;
-}
-
-.notification-item.unread {
-  background-color: #EFF6FF;
-}
-
-.notification-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.notification-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.notification-content h4 {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #0F172A;
-  margin: 0 0 0.25rem 0;
-}
-
-.notification-content p {
-  font-size: 0.875rem;
-  color: #6B7280;
-  margin: 0 0 0.5rem 0;
-  line-height: 1.4;
-}
-
-.notification-time {
-  font-size: 0.75rem;
-  color: #9CA3AF;
-}
-
-.unread-dot {
-  width: 8px;
-  height: 8px;
-  background-color: #3B82F6;
-  border-radius: 50%;
-  flex-shrink: 0;
-  margin-top: 0.25rem;
-}
+.notification-item:hover { background-color: #F9FAFB; }
+.notification-item.unread { background-color: #EFF6FF; }
+.notification-content h4 { font-size: 0.875rem; font-weight: 600; color: #0F172A; margin: 0 0 0.1rem 0; }
+.notification-content p { font-size: 0.8rem; color: #6B7280; margin: 0; line-height: 1.3; }
+.notification-time { font-size: 0.7rem; color: #9CA3AF; margin-top: 0.25rem; display: block; }
+.unread-dot { width: 8px; height: 8px; background-color: #3B82F6; border-radius: 50%; margin-top: 0.25rem; }
 
 @media (max-width: 768px) {
   .notification-dropdown {
-    width: 100vw;
-    max-width: 100vw;
-    right: -1rem;
-    border-radius: 0.75rem 0.75rem 0 0;
+    width: fixed;
+    left: 1rem;
+    right: 1rem; 
+    width: auto;
   }
 }
 </style>

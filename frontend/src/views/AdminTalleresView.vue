@@ -19,8 +19,14 @@ const fetchTalleres = async () => {
 
 // Cargar Sectores
 const fetchSectors = async () => {
-    const res = await fetch('http://localhost:8000/api/sectors.php');
-    sectors.value = await res.json();
+    try {
+        const res = await fetch('http://localhost:8000/api/sectors.php');
+        const data = await res.json();
+        sectors.value = data;
+        console.log('Sectores cargados:', sectors.value);
+    } catch (error) {
+        console.error('Error cargando sectores:', error);
+    }
 };
 
 onMounted(() => {

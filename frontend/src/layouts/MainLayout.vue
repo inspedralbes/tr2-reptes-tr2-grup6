@@ -1,96 +1,51 @@
 <script setup>
-import { useAuthStore } from '../stores/auth';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import Sidebar from '../components/layout/Sidebar.vue';
+import Header from '../components/layout/Header.vue';
+import Footer from '../components/layout/Footer.vue';
 
-const auth = useAuthStore();
-const router = useRouter();
-
-const handleLogout = () => {
-    auth.logout();
-    router.push('/login');
-};
+const isSidebarOpen = ref(false);
 </script>
 
 <template>
-  <div class="flex h-screen bg-gray-100">
+  <div class="flex h-screen bg-gray-50 font-sans overflow-hidden">
     <!-- Sidebar -->
-    <aside class="w-64 bg-kairos-navy text-white flex flex-col shadow-xl">
-      <div class="p-6 text-center border-b border-gray-700">
-        <h1 class="text-2xl font-bold text-kairos-gold font-serif">KAIROS</h1>
-        <p class="text-xs text-gray-400 mt-1">Gestió ENGINY</p>
-      </div>
+    <Sidebar 
+        :is-open="isSidebarOpen" 
+        @close="isSidebarOpen = false" 
+    />
 
-      <nav class="flex-1 p-4 space-y-2">
-        <div v-if="auth.user?.rol === 2">
-            <router-link to="/dashboard" 
-                class="flex items-center p-3 rounded-lg hover:bg-white/10 transition" 
-                active-class="bg-kairos-gold text-kairos-navy font-bold">
-                <span>📚 Catàleg de Tallers</span>
-            </router-link>
+    <!-- Main Wrapper -->
+    <div class="flex-1 flex flex-col min-h-screen transition-all duration-300 md:ml-64">
+      
+      <!-- Header -->
+      <Header @toggle-sidebar="isSidebarOpen = !isSidebarOpen" />
 
-            <router-link to="/mis-solicitudes" 
-                class="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
-                active-class="bg-kairos-gold text-kairos-navy font-bold">
-                <span>📋 Les Meves Sol·licituds</span>
-            </router-link>
+      <!-- Content -->
+      <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+        <div class="max-w-7xl mx-auto w-full">
+            <router-view v-slot="{ Component }">
+                <transition name="fade" mode="out-in">
+                    <component :is="Component" />
+                </transition>
+            </router-view>
         </div>
+      </main>
 
-        <div v-if="auth.user && (auth.user.rol === 3 || auth.isAdmin)">
-          <router-link to="/professor/agenda" 
-            class="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
-            active-class="bg-kairos-gold text-kairos-navy font-bold">
-            <span>🗓️ La Meva Agenda</span>
-          </router-link>
-        </div>
-
-        <div v-if="auth.isAdmin" class="mt-6 pt-6 border-t border-gray-700">
-            <p class="px-3 text-xs font-semibold text-gray-400 uppercase mb-2">Administració</p>
-
-            <router-link to="/admin/stats" 
-                class="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
-                active-class="bg-kairos-gold text-kairos-navy font-bold">
-                <span>📊 Analítica i Impacte</span>
-            </router-link>
-
-            <router-link to="/admin/solicitudes" 
-                class="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
-                active-class="bg-kairos-gold text-kairos-navy font-bold">
-                <span>⚡ Gestió Peticions</span>
-            </router-link>
-
-          <router-link to="/admin/talleres" 
-            class="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
-            active-class="bg-kairos-gold text-kairos-navy font-bold">
-            <span>⚙️ Gestió Catàleg</span>
-          </router-link>
-
-          <router-link to="/admin/users" 
-            class="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
-            active-class="bg-kairos-gold text-kairos-navy font-bold">
-            <span>👥 Usuaris i Centres</span>
-          </router-link>
-        </div>
-      </nav>
-
-      <div class="p-4 border-t border-gray-700">
-        <div class="flex items-center mb-4">
-            <div class="w-8 h-8 rounded-full bg-kairos-blue flex items-center justify-center font-bold">
-                {{ auth.user?.nom?.charAt(0) || 'U' }}
-            </div>
-            <div class="ml-3">
-                <p class="text-sm font-medium">{{ auth.user?.nom }}</p>
-                <p class="text-xs text-gray-400">Centre Educatiu</p>
-            </div>
-        </div>
-        <button @click="handleLogout" class="w-full text-sm text-red-300 hover:text-red-100 text-left">
-          Tancar Sessió
-        </button>
-      </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 overflow-y-auto p-8">
-      <slot></slot>
-    </main>
+      <!-- Footer -->
+      <Footer />
+    </div>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
