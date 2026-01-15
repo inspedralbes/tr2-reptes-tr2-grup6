@@ -159,12 +159,67 @@ class AsignadorInteligente {
                         $stmt_upd = $this->pdo->prepare($sql_upd);
                         $stmt_upd->execute([':id' => $sol['id']]);
                         
+                        // INTEGRACIÓN: Enviar notificación y email
+                        require_once __DIR__ . '/../utils/NotificationService.php';
+                        require_once __DIR__ . '/../utils/EmailService.php';
+                        
+                        $notificationService = new NotificationService();
+                        $emailService = new EmailService();
+                        
+                        $notificationService->notificarAsignacio($sol['id']);
+                        
+                        // Obtener datos del centre per enviar email
+                        $sql_centre = "SELECT u.email, u.nom_complet, t.nom as taller_nom
+                                      FROM sollicituds s
+                                      JOIN usuaris u ON s.centre_id = u.id
+                                      JOIN tallers t ON s.taller_id = t.id
+                                      WHERE s.id = :id";
+                        $stmt_centre = $this->pdo->prepare($sql_centre);
+                        $stmt_centre->execute([':id' => $sol['id']]);
+                        $centre_data = $stmt_centre->fetch(PDO::FETCH_ASSOC);
+                        
+                        if ($centre_data) {
+                            $emailService->enviarEmailAsignacio(
+                                $centre_data['email'],
+                                $centre_data['nom_complet'],
+                                $centre_data['taller_nom']
+                            );
+                        }
+                        
                         $asignaciones_creadas++;
                     } else {
                         // RECHAZAR
                         $sql_rej = "UPDATE sollicituds SET estat = 'rebutjada' WHERE id = :id";
                         $stmt_rej = $this->pdo->prepare($sql_rej);
                         $stmt_rej->execute([':id' => $sol['id']]);
+                        
+                        // INTEGRACIÓN: Enviar notificación y email de rechazo
+                        require_once __DIR__ . '/../utils/NotificationService.php';
+                        require_once __DIR__ . '/../utils/EmailService.php';
+                        
+                        $notificationService = new NotificationService();
+                        $emailService = new EmailService();
+                        
+                        $notificationService->notificarRebuig($sol['id'], 'Capacitat completa');
+                        
+                        // Obtener datos del centre per enviar email
+                        $sql_centre = "SELECT u.email, u.nom_complet, t.nom as taller_nom
+                                      FROM sollicituds s
+                                      JOIN usuaris u ON s.centre_id = u.id
+                                      JOIN tallers t ON s.taller_id = t.id
+                                      WHERE s.id = :id";
+                        $stmt_centre = $this->pdo->prepare($sql_centre);
+                        $stmt_centre->execute([':id' => $sol['id']]);
+                        $centre_data = $stmt_centre->fetch(PDO::FETCH_ASSOC);
+                        
+                        if ($centre_data) {
+                            $emailService->enviarEmailRebuig(
+                                $centre_data['email'],
+                                $centre_data['nom_complet'],
+                                $centre_data['taller_nom'],
+                                'Capacitat completa'
+                            );
+                        }
                         
                         $rechazadas++;
                     }

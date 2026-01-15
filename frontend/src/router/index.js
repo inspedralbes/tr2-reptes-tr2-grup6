@@ -9,6 +9,7 @@ import AdminTalleresView from '../views/AdminTalleresView.vue'
 import ProfessorAgendaView from '../views/ProfessorAgendaView.vue'
 import AdminUsersView from '../views/AdminUsersView.vue'
 import AdminStatsView from '../views/AdminStatsView.vue'
+import AlumnesView from '../views/AlumnesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +68,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/alumnes',
+      name: 'alumnes',
+      component: AlumnesView,
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/',
       redirect: '/login'
     }
@@ -76,7 +83,7 @@ const router = createRouter({
 // Guardián de navegación (Middleware)
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
-  
+
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login');
   } else {
