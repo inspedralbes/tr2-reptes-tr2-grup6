@@ -9,10 +9,10 @@ class Database {
     private $password_remote = "V28UIDV0n&[zdyda";
     
     // Configuración para Docker local (desarrollo)
-    private $host = "mi_mysql";
+    private $host = "db";
     private $db_name = "kairos_db";
-    private $username = "kairos_user";
-    private $password = "kairos123";
+    private $username = "root";
+    private $password = "rootpass";
     
     public $conn;
 
