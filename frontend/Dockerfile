@@ -1,18 +1,18 @@
-FROM node:22-alpine
+FROM node:22-bullseye-slim
 
 WORKDIR /app
 
-# Copiar fitxers de paquets
+# Copy node config files first for better caching
 COPY package.json package-lock.json* ./
 
-# Instalar dependencies
-RUN npm install
+# Clean install with forced rebuild of optional dependencies
+RUN npm install --force --verbose 2>&1 | tail -20
 
-# Copiar la resta de la aplicacio
+# Copy application source
 COPY . .
 
-# exposar la aplicacio al port
+# Expose Vite port
 EXPOSE 5173
 
-# executar el server host
-CMD ["npm", "run", "dev"]
+# Start Vite and bind to all interfaces
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
