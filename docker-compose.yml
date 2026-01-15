@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  frontend:
+    container_name: kairos-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - php
+
   php:
     image: php:8.2-apache
     container_name: kairos-php
