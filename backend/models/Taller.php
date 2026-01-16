@@ -9,12 +9,13 @@ class Taller {
     }
 
     public function read() {
-        // Seleccionamos también el nombre de la categoría
-        $query = "SELECT t.id, t.nom, t.descripcio, t.modalitat, t.durada_minuts, t.imatge_url, c.nom as categoria_nom, c.color as categoria_color 
+        // Seleccionamos también el nombre y detalles del sector
+        $query = "SELECT t.id, t.nom, t.descripcio, t.modalitat, t.durada_minuts, t.capacitat_max, t.imatge_url, t.data, t.sector_id, 
+                         s.nom as sector_nom, s.color as sector_color, s.icona as sector_icona
                   FROM " . $this->table . " t
-                  LEFT JOIN categories c ON t.categoria_id = c.id
+                  LEFT JOIN sectors s ON t.sector_id = s.id
                   WHERE t.estat = 'actiu'
-                  ORDER BY t.nom ASC";
+                  ORDER BY t.data ASC, t.nom ASC";
 
         $stmt = $this->conn->prepare($query);
         $stmt->execute();

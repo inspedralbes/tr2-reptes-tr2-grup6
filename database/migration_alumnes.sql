@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS alumnes_inscrits (
     INDEX idx_sollicitud (sollicitud_id)
 );
 
--- Insertar alumnes de exemple per testing
-INSERT INTO alumnes_inscrits (sollicitud_id, nom, cognoms, curs, grup, email) VALUES
+-- Insertar alumnes de exemple per testing (Idempotente)
+INSERT IGNORE INTO alumnes_inscrits (sollicitud_id, nom, cognoms, curs, grup, email) VALUES
 (1, 'Marc', 'García López', '1r ESO', 'A', 'marc.garcia@exemple.cat'),
 (1, 'Laura', 'Martínez Sánchez', '1r ESO', 'A', 'laura.martinez@exemple.cat'),
 (1, 'David', 'Fernández Ruiz', '1r ESO', 'B', 'david.fernandez@exemple.cat'),

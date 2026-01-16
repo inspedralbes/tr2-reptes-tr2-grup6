@@ -30,6 +30,9 @@ docker exec -i kairos-db mysql -u root -prootpass kairos_db < database/migration
 Write-Host "   - Migración de historial de consumo..." -ForegroundColor Gray
 docker exec -i kairos-db mysql -u root -prootpass kairos_db < database/migration_historial_consumo.sql 2>$null
 
+Write-Host "   - Migración de fechas en talleres..." -ForegroundColor Gray
+docker exec -i kairos-db mysql -u root -prootpass kairos_db < database/migration_talleres_fecha.sql 2>$null
+
 # Crear directorio de uploads
 Write-Host "`n📁 Creando directorio de uploads..." -ForegroundColor Yellow
 if (!(Test-Path "backend/uploads/evidencies")) {

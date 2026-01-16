@@ -3,7 +3,12 @@
 
 function habilitarCORS() {
     // Permite acceso desde cualquier origen (en producción cambiar '*' por tu dominio real)
-    header("Access-Control-Allow-Origin: *");
+    if (isset($_SERVER['HTTP_ORIGIN'])) {
+        header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+        header('Access-Control-Allow-Credentials: true');
+    } else {
+        header("Access-Control-Allow-Origin: *");
+    }
     header("Content-Type: application/json; charset=UTF-8");
     header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");

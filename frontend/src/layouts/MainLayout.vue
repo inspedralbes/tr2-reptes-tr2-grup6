@@ -24,11 +24,9 @@ const isSidebarOpen = ref(false);
       <!-- Content -->
       <main class="flex-1 p-4 md:p-8 overflow-y-auto">
         <div class="max-w-7xl mx-auto w-full">
-            <router-view v-slot="{ Component }">
-                <transition name="fade" mode="out-in">
-                    <component :is="Component" />
-                </transition>
-            </router-view>
+            <slot>
+                <!-- Fallback content if needed -->
+            </slot>
         </div>
       </main>
 

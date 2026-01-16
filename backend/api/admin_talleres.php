@@ -14,8 +14,8 @@ if ($method === 'POST') {
     $data = json_decode(file_get_contents("php://input"));
 
     if(!empty($data->nom) && !empty($data->modalitat)) {
-        $query = "INSERT INTO tallers (nom, descripcio, modalitat, durada_minuts, capacitat_max, imatge_url, sector_id, estat)
-                  VALUES (:nom, :desc, :mod, :dur, :cap, :img, :sec, 'actiu')";
+        $query = "INSERT INTO tallers (nom, descripcio, modalitat, durada_minuts, capacitat_max, imatge_url, sector_id, data, estat)
+                  VALUES (:nom, :desc, :mod, :dur, :cap, :img, :sec, :dat, 'actiu')";
         
         $stmt = $db->prepare($query);
         
@@ -27,6 +27,7 @@ if ($method === 'POST') {
         $stmt->bindParam(':cap', $data->capacitat);
         $stmt->bindParam(':img', $data->imatge);
         $stmt->bindParam(':sec', $data->sector_id);
+        $stmt->bindParam(':dat', $data->data);
 
         if($stmt->execute()) {
             echo json_encode(["success" => true, "message" => "Taller creat correctament"]);

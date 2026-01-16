@@ -27,12 +27,21 @@ INSERT INTO sectors (nom, color, icona) VALUES
 
 -- 3. Modificar la tabla TALLERS para vincularla al Sector
 -- Añadir columna sector_id si no existe (ignora error si ya existe)
-ALTER TABLE tallers ADD COLUMN sector_id INT AFTER nom;
-
--- Añadir foreign key (ignora error si ya existe)
-ALTER TABLE tallers ADD CONSTRAINT fk_taller_sector 
-    FOREIGN KEY (sector_id) REFERENCES sectors(id)
-    ON DELETE SET NULL;
+-- 3. Modificar la tabla TALLERS para vincularla al Sector
+-- Añadir columna sector_id de forma segura (Idempotente)
+DROP PROCEDURE IF EXISTS upgrade_sectors_schema;
+DELIMITER //
+CREATE PROCEDURE upgrade_sectors_schema()
+BEGIN
+    -- Verificar si existe la column sector_id
+    IF NOT EXISTS(SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='kairos_db' AND TABLE_NAME='tallers' AND COLUMN_NAME='sector_id') THEN
+        ALTER TABLE tallers ADD COLUMN sector_id INT AFTER nom;
+        ALTER TABLE tallers ADD CONSTRAINT fk_taller_sector FOREIGN KEY (sector_id) REFERENCES sectors(id) ON DELETE SET NULL;
+    END IF;
+END //
+DELIMITER ;
+CALL upgrade_sectors_schema();
+DROP PROCEDURE upgrade_sectors_schema;
 
 -- 4. Migrar datos existentes (si tienes talleres con categoria_id)
 -- Mapeo básico de categorías antiguas a sectores nuevos:

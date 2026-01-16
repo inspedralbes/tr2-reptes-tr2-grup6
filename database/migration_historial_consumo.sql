@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS historial_consumo (
 
 -- 2. Insertar datos históricos ficticios (años anteriores)
 -- Esto es para permitir que el algoritmo funcione desde el inicio
-INSERT INTO historial_consumo (centre_id, taller_id, anyo, realitzada, data_execucio) VALUES
+INSERT IGNORE INTO historial_consumo (centre_id, taller_id, anyo, realitzada, data_execucio) VALUES
 (2, 1, 2024, 1, '2024-11-15'),
 (2, 2, 2024, 1, '2024-12-10'),
 (2, 3, 2024, 0, NULL),

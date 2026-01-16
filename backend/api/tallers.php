@@ -24,10 +24,14 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
                 "descripcio" => $descripcio,
                 "modalitat" => $modalitat,
                 "durada_minuts" => $durada_minuts,
+                "capacitat_max" => $capacitat_max,
                 "imatge" => $imatge_url,
-                "categoria" => array(
-                    "nom" => $categoria_nom,
-                    "color" => $categoria_color
+                "data" => $data,
+                "sector" => array(
+                    "id" => $sector_id,
+                    "nom" => $sector_nom,
+                    "color" => $sector_color,
+                    "icona" => $sector_icona
                 )
             );
             array_push($tallers_arr, $item);

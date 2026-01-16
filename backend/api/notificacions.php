@@ -4,9 +4,9 @@
 
 session_start();
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+session_start();
+include_once '../config/Cors.php';
+habilitarCORS();
 
 // Validar sessió
 if (!isset($_SESSION['user_id'])) {
