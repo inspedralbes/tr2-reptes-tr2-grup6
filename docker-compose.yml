@@ -31,7 +31,7 @@ services:
       - DB_USER=root
       - DB_PASS=rootpass
     command: >
-      bash -c "docker-php-ext-install pdo pdo_mysql && apache2-foreground"
+      bash -c "mkdir -p /var/www/html/backend/uploads/evidencies && chmod 777 /var/www/html/backend/uploads/evidencies && docker-php-ext-install pdo pdo_mysql && apache2-foreground"
 
   db:
     image: mysql:8.0
@@ -42,7 +42,12 @@ services:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: kairos_db
     volumes:
-      - ./database/kairos_db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/kairos_db.sql:/docker-entrypoint-initdb.d/00_init.sql
+      - ./database/migration_notificacions.sql:/docker-entrypoint-initdb.d/01_notificacions.sql
+      - ./database/migration_alumnes.sql:/docker-entrypoint-initdb.d/02_alumnes.sql
+      - ./database/migration_sectors.sql:/docker-entrypoint-initdb.d/03_sectors.sql
+      - ./database/migration_historial_consumo.sql:/docker-entrypoint-initdb.d/04_historial.sql
+      - ./database/migration_talleres_fecha.sql:/docker-entrypoint-initdb.d/05_talleres_fecha.sql
       - db_data:/var/lib/mysql
 
 volumes:
