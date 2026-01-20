@@ -16,7 +16,7 @@ const isSidebarOpen = ref(false);
     />
 
     <!-- Main Wrapper -->
-    <div class="flex-1 flex flex-col min-h-screen transition-all duration-300 md:ml-64">
+    <div class="flex-1 flex flex-col min-h-screen md:ml-64">
       
       <!-- Header -->
       <Header @toggle-sidebar="isSidebarOpen = !isSidebarOpen" />

@@ -33,7 +33,11 @@ onMounted(async () => {
 // Filtrar talleres por el sector seleccionado
 const tallersDelSector = computed(() => {
     if (!sectorSeleccionado.value) return [];
-    return tallers.value.filter(t => t.sector_id === sectorSeleccionado.value.id);
+    return tallers.value.filter(t => {
+        // El API devuelve un objeto sector con { id, nom, color, icona }
+        const sectorId = t.sector?.id || t.sector_id;
+        return String(sectorId) === String(sectorSeleccionado.value.id);
+    });
 });
 
 // Iconos (Mapeo rápido de texto a emojis para prototipo)
@@ -107,7 +111,6 @@ const cerrarModal = () => {
             </div>
         </div>
 
-        <!-- Vista de Talleres del Sector -->
         <div v-else-if="sectorSeleccionado && !loading">
             <div v-if="tallersDelSector.length === 0" class="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-200">
                 <p class="text-xl text-gray-400 mb-2">📭 Encara no hi ha tallers disponibles</p>

@@ -1,159 +1,163 @@
 <template>
-  <div class="alumnes-view container-main">
-    <div class="page-header">
-      <h1 class="page-title">Gestió d'Alumnes</h1>
-      <p class="page-subtitle">Gestiona la llista d'alumnes per a les teves sol·licituds de tallers</p>
-    </div>
-    
-    <!-- Selector de Sol·licitud -->
-    <div class="card mb-6">
-      <div class="card-header">Selecciona una Sol·licitud</div>
-      <div class="card-body">
-        <select v-model="selectedSollicitudId" @change="loadAlumnes" class="input">
-          <option value="">-- Selecciona una sol·licitud --</option>
-          <option 
-            v-for="sol in sollicituds" 
-            :key="sol.id" 
-            :value="sol.id"
-          >
-            {{ sol.taller_nom }} - {{ sol.estat }}
-          </option>
-        </select>
-      </div>
-    </div>
-    
-    <div v-if="selectedSollicitudId">
-      <!-- Accions -->
-      <div class="actions-bar">
-        <button @click="showAddForm = true" class="btn btn-primary">
-          + Afegir Alumne
-        </button>
-        <button @click="showImportCSV = true" class="btn btn-secondary">
-          📥 Importar CSV
-        </button>
-        <button @click="exportAlumnes" class="btn btn-secondary">
-          📤 Exportar
-        </button>
+  <MainLayout>
+    <div class="alumnes-view container-main">
+      <div class="page-header">
+        <h1 class="page-title">Gestió d'Alumnes</h1>
+        <p class="page-subtitle">Gestiona la llista d'alumnes per a les teves sol·licituds de tallers</p>
       </div>
       
-      <!-- Formulari d'Alta Individual -->
-      <div v-if="showAddForm" class="card mb-6 fade-in">
-        <div class="card-header">
-          Afegir Alumne
-          <button @click="showAddForm = false" class="close-btn">✕</button>
-        </div>
+      <!-- Selector de Sol·licitud -->
+      <div class="card mb-6">
+        <div class="card-header">Selecciona una Sol·licitud</div>
         <div class="card-body">
-          <form @submit.prevent="addAlumne" class="alumne-form">
-            <div class="form-row">
-              <div class="form-group">
-                <label class="label">Nom *</label>
-                <input v-model="newAlumne.nom" type="text" class="input" required />
+          <select v-model="selectedSollicitudId" @change="loadAlumnes" class="input">
+            <option value="">-- Selecciona una sol·licitud --</option>
+            <option 
+              v-for="sol in sollicituds" 
+              :key="sol.id" 
+              :value="sol.id"
+            >
+              {{ sol.taller_nom }} - {{ sol.estat }}
+            </option>
+          </select>
+        </div>
+      </div>
+      
+      <div v-if="selectedSollicitudId">
+        <!-- Accions -->
+        <div class="actions-bar">
+          <button @click="showAddForm = true" class="btn btn-primary">
+            + Afegir Alumne
+          </button>
+          <button @click="showImportCSV = true" class="btn btn-secondary">
+            📥 Importar CSV
+          </button>
+          <button @click="exportAlumnes" class="btn btn-secondary">
+            📤 Exportar
+          </button>
+        </div>
+        
+        <!-- Formulari d'Alta Individual -->
+        <div v-if="showAddForm" class="card mb-6 fade-in">
+          <div class="card-header">
+            Afegir Alumne
+            <button @click="showAddForm = false" class="close-btn">✕</button>
+          </div>
+          <div class="card-body">
+            <form @submit.prevent="addAlumne" class="alumne-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="label">Nom *</label>
+                  <input v-model="newAlumne.nom" type="text" class="input" required />
+                </div>
+                <div class="form-group">
+                  <label class="label">Cognoms *</label>
+                  <input v-model="newAlumne.cognoms" type="text" class="input" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="label">Curs</label>
+                  <input v-model="newAlumne.curs" type="text" class="input" placeholder="1r ESO" />
+                </div>
+                <div class="form-group">
+                  <label class="label">Grup</label>
+                  <input v-model="newAlumne.grup" type="text" class="input" placeholder="A" />
+                </div>
               </div>
               <div class="form-group">
-                <label class="label">Cognoms *</label>
-                <input v-model="newAlumne.cognoms" type="text" class="input" required />
+                <label class="label">Email</label>
+                <input v-model="newAlumne.email" type="email" class="input" />
               </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="label">Curs</label>
-                <input v-model="newAlumne.curs" type="text" class="input" placeholder="1r ESO" />
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" :disabled="saving">
+                  {{ saving ? 'Guardant...' : 'Afegir Alumne' }}
+                </button>
+                <button type="button" @click="cancelAdd" class="btn btn-secondary">
+                  Cancel·lar
+                </button>
               </div>
-              <div class="form-group">
-                <label class="label">Grup</label>
-                <input v-model="newAlumne.grup" type="text" class="input" placeholder="A" />
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="label">Email</label>
-              <input v-model="newAlumne.email" type="email" class="input" />
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary" :disabled="saving">
-                {{ saving ? 'Guardant...' : 'Afegir Alumne' }}
+            </form>
+          </div>
+        </div>
+        
+        <!-- Importació CSV -->
+        <div v-if="showImportCSV" class="card mb-6 fade-in">
+          <div class="card-header">
+            Importar CSV
+            <button @click="showImportCSV = false" class="close-btn">✕</button>
+          </div>
+          <div class="card-body">
+            <p class="mb-4">Format CSV: <code>nom,cognoms,curs,grup,email</code></p>
+            <textarea 
+              v-model="csvData" 
+              class="input" 
+              rows="10" 
+              placeholder="Marc,García López,1r ESO,A,marc@exemple.cat&#10;Laura,Martínez Sánchez,1r ESO,A,laura@exemple.cat"
+            ></textarea>
+            <div class="form-actions mt-4">
+              <button @click="importCSV" class="btn btn-primary" :disabled="importing">
+                {{ importing ? 'Important...' : 'Importar Alumnes' }}
               </button>
-              <button type="button" @click="cancelAdd" class="btn btn-secondary">
+              <button @click="showImportCSV = false" class="btn btn-secondary">
                 Cancel·lar
               </button>
             </div>
-          </form>
-        </div>
-      </div>
-      
-      <!-- Importació CSV -->
-      <div v-if="showImportCSV" class="card mb-6 fade-in">
-        <div class="card-header">
-          Importar CSV
-          <button @click="showImportCSV = false" class="close-btn">✕</button>
-        </div>
-        <div class="card-body">
-          <p class="mb-4">Format CSV: <code>nom,cognoms,curs,grup,email</code></p>
-          <textarea 
-            v-model="csvData" 
-            class="input" 
-            rows="10" 
-            placeholder="Marc,García López,1r ESO,A,marc@exemple.cat&#10;Laura,Martínez Sánchez,1r ESO,A,laura@exemple.cat"
-          ></textarea>
-          <div class="form-actions mt-4">
-            <button @click="importCSV" class="btn btn-primary" :disabled="importing">
-              {{ importing ? 'Important...' : 'Importar Alumnes' }}
-            </button>
-            <button @click="showImportCSV = false" class="btn btn-secondary">
-              Cancel·lar
-            </button>
           </div>
         </div>
-      </div>
-      
-      <!-- Llista d'Alumnes -->
-      <div class="card">
-        <div class="card-header">
-          Llista d'Alumnes ({{ alumnes.length }})
-        </div>
-        <div class="card-body">
-          <div v-if="loading" class="loading-state">
-            <div class="spinner"></div>
-            <p>Carregant alumnes...</p>
+        
+        <!-- Llista d'Alumnes -->
+        <div class="card">
+          <div class="card-header">
+            Llista d'Alumnes ({{ alumnes.length }})
           </div>
-          
-          <div v-else-if="alumnes.length === 0" class="empty-state">
-            <p>No hi ha alumnes afegits encara</p>
+          <div class="card-body">
+            <div v-if="loading" class="loading-state">
+              <div class="spinner"></div>
+              <p>Carregant alumnes...</p>
+            </div>
+            
+            <div v-else-if="alumnes.length === 0" class="empty-state">
+              <p>No hi ha alumnes afegits encara</p>
+            </div>
+            
+            <table v-else class="table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Cognoms</th>
+                  <th>Curs</th>
+                  <th>Grup</th>
+                  <th>Email</th>
+                  <th>Accions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="alumne in alumnes" :key="alumne.id">
+                  <td>{{ alumne.nom }}</td>
+                  <td>{{ alumne.cognoms }}</td>
+                  <td>{{ alumne.curs || '-' }}</td>
+                  <td>{{ alumne.grup || '-' }}</td>
+                  <td>{{ alumne.email || '-' }}</td>
+                  <td>
+                    <button @click="deleteAlumne(alumne.id)" class="btn-icon btn-danger" title="Eliminar">
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          
-          <table v-else class="table">
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Cognoms</th>
-                <th>Curs</th>
-                <th>Grup</th>
-                <th>Email</th>
-                <th>Accions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="alumne in alumnes" :key="alumne.id">
-                <td>{{ alumne.nom }}</td>
-                <td>{{ alumne.cognoms }}</td>
-                <td>{{ alumne.curs || '-' }}</td>
-                <td>{{ alumne.grup || '-' }}</td>
-                <td>{{ alumne.email || '-' }}</td>
-                <td>
-                  <button @click="deleteAlumne(alumne.id)" class="btn-icon btn-danger" title="Eliminar">
-                    🗑️
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
-  </div>
+  </MainLayout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import MainLayout from '../layouts/MainLayout.vue'
+
 
 const sollicituds = ref([])
 const selectedSollicitudId = ref('')

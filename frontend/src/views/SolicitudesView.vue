@@ -9,7 +9,7 @@ const loading = ref(true);
 
 onMounted(async () => {
     try {
-        const res = await fetch(`http://localhost:8000/api/mis-solicitudes.php?centre_id=${auth.user.id}`);
+        const res = await fetch(`http://localhost:8000/api/mis_solicitudes.php?centre_id=${auth.user.id}`);
         solicitudes.value = await res.json();
     } catch (error) {
         console.error("Error cargando solicitudes", error);

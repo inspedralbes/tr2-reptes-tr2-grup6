@@ -47,7 +47,8 @@ class Sollicitud {
     }
 
     public function getByCentre($centre_id) {
-        $query = "SELECT s.id, s.estat, s.data_creacio, s.nombre_alumnes, s.comentaris,
+        $query = "SELECT s.id, s.estat, s.data_creacio, s.nombre_alumnes, s.comentaris, 
+                         s.data_preferent, s.curs_grup, s.necessitats_especifiques, s.preferencia_dates,
                          t.nom as taller_nom, t.descripcio as taller_descripcio, t.imatge_url,
                          c.nom as categoria_nom
                   FROM " . $this->table . " s

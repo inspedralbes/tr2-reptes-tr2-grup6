@@ -186,79 +186,86 @@ const getModalitatLabel = (mod) => {
         </div>
 
         <!-- Create Modal -->
-        <div v-if="showModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all overflow-y-auto">
-            <div class="bg-white rounded-3xl w-full max-w-2xl shadow-2xl transform transition-all animate-in zoom-in-95 duration-200 my-8">
-                <div class="p-8 border-b border-gray-100 flex justify-between items-center bg-slate-50 rounded-t-3xl">
-                    <div>
-                        <h3 class="text-2xl font-bold text-slate-900">Crear Nou Taller</h3>
-                        <p class="text-sm text-slate-500 uppercase tracking-widest font-bold mt-1">Configuració del catàleg</p>
+        <Teleport to="body">
+            <div v-if="showModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+                <div class="bg-white rounded-3xl w-full max-w-2xl shadow-2xl transform transition-all animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+                    
+                    <!-- Header (Fixed) -->
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50 rounded-t-3xl flex-none">
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-900">Crear Nou Taller</h3>
+                            <p class="text-sm text-slate-500 uppercase tracking-widest font-bold mt-1">Configuració del catàleg</p>
+                        </div>
+                        <button @click="showModal = false" class="text-slate-400 hover:text-slate-600 p-2 hover:bg-white rounded-full transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
-                    <button @click="showModal = false" class="text-slate-400 hover:text-slate-600 p-2 hover:bg-white rounded-full transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                    
+                    <!-- Scrollable Content -->
+                    <div class="overflow-y-auto p-6 md:p-8 flex-1">
+                        <form @submit.prevent="crearTaller" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="md:col-span-2">
+                                    <label class="text-sm font-bold text-slate-700 mb-2 block">Nom del Taller</label>
+                                    <input v-model="form.nom" placeholder="Ej: Introducció a la Robòtica" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none" required>
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <label class="text-sm font-bold text-slate-700 mb-2 block">Descripció</label>
+                                    <textarea v-model="form.descripcio" placeholder="Descripció detallada per als centres..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none" rows="3"></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="text-sm font-bold text-slate-700 mb-2 block">Modalitat</label>
+                                    <select v-model="form.modalitat" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
+                                        <option value="A">🚗 Mod A (Centre ve)</option>
+                                        <option value="B">🏫 Mod B (Profe va)</option>
+                                        <option value="C">💻 Mod C (Online)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="text-sm font-bold text-slate-700 mb-2 block">Sector Professional</label>
+                                    <select v-model.number="form.sector_id" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none" required>
+                                        <option value="" disabled>Selecciona un sector...</option>
+                                        <option v-for="sec in sectors" :key="sec.id" :value="sec.id">
+                                            {{ sec.nom }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="text-sm font-bold text-slate-700 mb-2 block">Data del Taller</label>
+                                    <input type="date" v-model="form.data" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none" required>
+                                </div>
+
+                                <div>
+                                    <label class="text-sm font-bold text-slate-700 mb-2 block">Durada (minuts)</label>
+                                    <input type="number" v-model.number="form.durada" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
+                                </div>
+
+                                <div>
+                                    <label class="text-sm font-bold text-slate-700 mb-2 block">Capacitat Màxima</label>
+                                    <input type="number" v-model.number="form.capacitat" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
+                                </div>
+
+                                <div>
+                                    <label class="text-sm font-bold text-slate-700 mb-2 block">URL Imatge</label>
+                                    <input v-model="form.imatge" placeholder="https://images.unsplash.com/..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none text-sm">
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end gap-3 pt-6 border-t border-gray-100">
+                                <button type="button" @click="showModal = false" class="px-6 py-3 text-slate-500 font-bold hover:bg-slate-100 rounded-xl transition-colors">Cancel·lar</button>
+                                <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-md hover:shadow-lg transition-all">Guardar Taller</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                
-                <form @submit.prevent="crearTaller" class="p-8 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="md:col-span-2">
-                            <label class="text-sm font-bold text-slate-700 mb-2 block">Nom del Taller</label>
-                            <input v-model="form.nom" placeholder="Ej: Introducció a la Robòtica" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none" required>
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="text-sm font-bold text-slate-700 mb-2 block">Descripció</label>
-                            <textarea v-model="form.descripcio" placeholder="Descripció detallada per als centres..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none" rows="3"></textarea>
-                        </div>
-                        
-                        <div>
-                            <label class="text-sm font-bold text-slate-700 mb-2 block">Modalitat</label>
-                            <select v-model="form.modalitat" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-                                <option value="A">🚗 Mod A (Centre ve)</option>
-                                <option value="B">🏫 Mod B (Profe va)</option>
-                                <option value="C">💻 Mod C (Online)</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="text-sm font-bold text-slate-700 mb-2 block">Sector Professional</label>
-                            <select v-model.number="form.sector_id" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none" required>
-                                <option value="" disabled>Selecciona un sector...</option>
-                                <option v-for="sec in sectors" :key="sec.id" :value="sec.id">
-                                    {{ sec.nom }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="text-sm font-bold text-slate-700 mb-2 block">Data del Taller</label>
-                            <input type="date" v-model="form.data" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none" required>
-                        </div>
-
-                        <div>
-                            <label class="text-sm font-bold text-slate-700 mb-2 block">Durada (minuts)</label>
-                            <input type="number" v-model.number="form.durada" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-                        </div>
-
-                        <div>
-                            <label class="text-sm font-bold text-slate-700 mb-2 block">Capacitat Màxima</label>
-                            <input type="number" v-model.number="form.capacitat" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-                        </div>
-
-                        <div>
-                            <label class="text-sm font-bold text-slate-700 mb-2 block">URL Imatge</label>
-                            <input v-model="form.imatge" placeholder="https://images.unsplash.com/..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-all outline-none text-sm">
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end gap-3 pt-6 border-t border-gray-100">
-                        <button type="button" @click="showModal = false" class="px-6 py-3 text-slate-500 font-bold hover:bg-slate-100 rounded-xl transition-colors">Cancel·lar</button>
-                        <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-md hover:shadow-lg transition-all">Guardar Taller</button>
-                    </div>
-                </form>
             </div>
-        </div>
+        </Teleport>
     </div>
   </MainLayout>
 </template>
