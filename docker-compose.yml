@@ -48,6 +48,7 @@ services:
       - ./database/migration_sectors.sql:/docker-entrypoint-initdb.d/03_sectors.sql
       - ./database/migration_historial_consumo.sql:/docker-entrypoint-initdb.d/04_historial.sql
       - ./database/migration_talleres_fecha.sql:/docker-entrypoint-initdb.d/05_talleres_fecha.sql
+      - ./database/migration_sollicituds_fase2.sql:/docker-entrypoint-initdb.d/06_sollicituds_fase2.sql
       - db_data:/var/lib/mysql
 
 volumes:

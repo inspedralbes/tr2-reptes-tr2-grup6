@@ -19,6 +19,13 @@ const form = ref({
 const enviando = ref(false);
 
 const enviar = async () => {
+    // Validar que el usuario esté autenticado
+    if (!auth.user || !auth.user.id) {
+        alert("❌ Error: No estàs autenticat correctament. Si us plau, torna a iniciar sessió.");
+        console.error("User not authenticated or missing ID:", auth.user);
+        return;
+    }
+
     enviando.value = true;
     try {
         const payload = {
@@ -31,6 +38,8 @@ const enviar = async () => {
             comentaris: form.value.necessitats // Legacy field
         };
 
+        console.log("Sending solicitud payload:", payload);
+
         const res = await fetch('http://localhost:8000/api/sollicitud.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -38,6 +47,8 @@ const enviar = async () => {
         });
         
         const data = await res.json();
+        console.log("Response from server:", data);
+        
         if(data.success) {
             alert("✅ Sol·licitud registrada! El servei de coordinació revisarà la teva petició.");
             form.value = { alumnes: 20, curs_grup: '', preferencia_dates: '', necessitats: '' };
@@ -46,7 +57,7 @@ const enviar = async () => {
             alert("❌ Error: " + (data.message || 'No s\'ha pogut enviar'));
         }
     } catch (e) {
-        console.error(e);
+        console.error("Error sending solicitud:", e);
         alert("❌ Error de connexió amb el servidor");
     } finally {
         enviando.value = false;
