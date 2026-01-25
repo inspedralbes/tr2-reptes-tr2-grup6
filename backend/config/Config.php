@@ -7,7 +7,7 @@
 class Config {
     
     // ===== ENTORN =====
-    public const APP_ENV = 'development'; // development, staging, production
+    public const APP_ENV = 'production'; // development, staging, production
     public const APP_DEBUG = true;
     public const APP_NAME = 'KAIROS';
     public const APP_VERSION = '1.0.0';
@@ -27,10 +27,10 @@ class Config {
     public const JWT_EXPIRATION = 86400; // 24 hores en segons
     
     // ===== SERVIDOR =====
-    public const APP_URL = 'http://localhost';
-    public const API_URL = 'http://localhost/api';
-    public const FRONTEND_URL = 'http://localhost:5173';
-    public const REALTIME_URL = 'ws://localhost:3000';
+    public const APP_URL = 'https://kairos.daw.inspedralbes.cat';
+    public const API_URL = 'https://kairos.daw.inspedralbes.cat/api';
+    public const FRONTEND_URL = 'https://kairos.daw.inspedralbes.cat';
+    public const REALTIME_URL = 'wss://kairos.daw.inspedralbes.cat';
     
     // ===== DIRECTÒRIES =====
     public const BASE_PATH = __DIR__ . '/..';
@@ -42,7 +42,9 @@ class Config {
     public const CORS_ORIGINS = [
         'http://localhost',
         'http://localhost:5173',
-        'http://localhost:3000'
+        'http://localhost:3000',
+        'https://kairos.daw.inspedralbes.cat',
+        'https://65.109.167.111'
     ];
     public const CORS_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'];
     public const CORS_HEADERS = ['Content-Type', 'Authorization', 'X-Requested-With'];
