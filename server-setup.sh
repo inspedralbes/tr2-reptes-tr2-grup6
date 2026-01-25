@@ -23,6 +23,20 @@ else
     echo -e "${GREEN}✅ Docker ja estava instal·lat.${NC}"
 fi
 
+# 2.# Instal·lar Docker Compose V2 (Plugin) i esborrar l'antic
+if command -v docker-compose &> /dev/null; then
+    echo -e "${YELLOW}🗑️  Esborrant versió antiga de Docker Compose...${NC}"
+    apt-get remove -y docker-compose
+    rm -f /usr/local/bin/docker-compose
+fi
+
+echo -e "${YELLOW}📦 Instal·lant Docker Compose V2...${NC}"
+apt-get update
+apt-get install -y docker-compose-plugin
+
+# Verificar instal·lació
+docker compose version
+
 # 3. Clonar o Actualitzar Repositori
 if [ -d ".git" ]; then
     echo -e "${YELLOW}🔄 Ja estàs dins del repositori. Actualitzant codi...${NC}"
