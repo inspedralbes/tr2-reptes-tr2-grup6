@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Base de Dades
+  db:
+    image: mysql:8.0
+    container_name: kairos_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: kairos_db
+      MYSQL_USER: kairos_user
+      MYSQL_PASSWORD: kairos_secret_password_change_this
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      # Inicialitzar BD automàticament si està buida
+      - ./backend/database:/docker-entrypoint-initdb.d
+
+  # Backend PHP
+  backend:
+    build: ./backend
+    container_name: kairos_backend
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=kairos_user
+      - DB_PASSWORD=kairos_secret_password_change_this
+
+  # phpMyAdmin (Interfície Visual BD)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: kairos_pma
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: kairos_user
+      PMA_PASSWORD: kairos_secret_password_change_this
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
