@@ -1,0 +1,58 @@
+#!/bin/bash
+# =============================================================
+# GITIGNORE - KAIROS
+# =============================================================
+
+# Entorn
+.env
+.env.local
+.env.*.local
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+.parcel-cache
+
+# PHP
+vendor/
+composer.lock
+*.php~
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Base de Dades
+*.sql.bak
+dumps/
+backups/
+
+# Logs
+backend/logs/*
+realtime-server/logs/*
+*.log
+
+# Cache
+backend/cache/*
+frontend/.nuxt/
+.cache/
+
+# Docker
+.dockerignore
+
+# Temporal
+tmp/
+temp/
+*.tmp
+
+# OS
+Thumbs.db
+.DS_Store
