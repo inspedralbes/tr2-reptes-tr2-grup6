@@ -49,5 +49,18 @@ services:
     depends_on:
       - db
 
+  # Frontend Nginx (Production)
+  frontend:
+    build: ./frontend
+    container_name: kairos_frontend
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    volumes:
+      - ./docker/certs:/etc/nginx/ssl
+
 volumes:
   db_data:
