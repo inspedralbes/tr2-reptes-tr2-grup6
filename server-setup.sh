@@ -32,7 +32,19 @@ fi
 
 echo -e "${YELLOW}📦 Instal·lant Docker Compose V2...${NC}"
 apt-get update
-apt-get install -y docker-compose-plugin
+if ! apt-get install -y docker-compose-plugin; then
+    echo -e "${YELLOW}⚠️  No s'ha trobat el paquet al repositori. Instal·lant binari manualment...${NC}"
+    
+    # 1. Instal·lar com a plugin de Docker CLI
+    mkdir -p /usr/local/lib/docker/cli-plugins
+    curl -SL https://github.com/docker/compose/releases/download/v2.29.1/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
+    chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+    
+    # 2. Instal·lar com a commanda standalone (backup)
+    curl -SL https://github.com/docker/compose/releases/download/v2.29.1/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+    ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+fi
 
 # Verificar instal·lació
 docker compose version
