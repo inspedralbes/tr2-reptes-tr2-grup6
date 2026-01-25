@@ -1,0 +1,41 @@
+[
+    {
+        "id": 1,
+        "title": "Robòtica Avançada",
+        "description": "Alumnes treballant amb braços robòtics en el taller final de curs.",
+        "file_path": "/uploads/gallery/robotica_1.jpg",
+        "workshop_title": "Robòtica i Automatització",
+        "center_name": "Institut Joan Brudieu",
+        "photographer_name": "Maria Garcia",
+        "academic_year": "2024-2025",
+        "view_count": 12,
+        "is_featured": true,
+        "created_at": "2024-11-15 10:30:00"
+    },
+    {
+        "id": 2,
+        "title": "Disseny 3D",
+        "description": "Impressió de peces dissenyades pels alumnes durant la setmana de la tecnologia.",
+        "file_path": "/uploads/gallery/3d_print.jpg",
+        "workshop_title": "Impressió 3D",
+        "center_name": "Escola Pia",
+        "photographer_name": "Pere Vila",
+        "academic_year": "2024-2025",
+        "view_count": 5,
+        "is_featured": false,
+        "created_at": "2024-12-01 09:15:00"
+    },
+    {
+        "id": 3,
+        "title": "Programació amb Arduino",
+        "description": "Detall dels circuits muntats en la sessió pràctica.",
+        "file_path": "/uploads/gallery/arduino_clase.jpg",
+        "workshop_title": "Arduino per a Principiants",
+        "center_name": "Institut La Valira",
+        "photographer_name": "Anna Soler",
+        "academic_year": "2024-2025",
+        "view_count": 8,
+        "is_featured": true,
+        "created_at": "2024-10-20 14:00:00"
+    }
+]

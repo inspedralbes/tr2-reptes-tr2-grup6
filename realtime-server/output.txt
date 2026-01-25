@@ -1,0 +1,28 @@
+DB Config: {
+  host: 'localhost',
+  user: 'kairos_user',
+  password: '***',
+  multipleStatements: true
+}
+Trying user: kairos_user, pass: ***
+Failed: Access denied for user 'kairos_user'@'172.20.0.1' (using password: YES)
+Trying user: kairos_user, pass: ***
+Failed: Access denied for user 'kairos_user'@'172.20.0.1' (using password: YES)
+Trying user: kairos_user, pass: ***
+Failed: Access denied for user 'kairos_user'@'172.20.0.1' (using password: YES)
+Trying user: root, pass: (empty)
+Failed: Access denied for user 'root'@'172.20.0.1' (using password: NO)
+Trying user: root, pass: ***
+Success!
+Connected to server.
+Databases: [
+  'information_schema',
+  'mysql',
+  'performance_schema',
+  'persones',
+  'sys'
+]
+Database kairos_db not found.
+Error: Error: No suitable database found.
+    at main (file:///C:/Users/Bryan/Documents/kairos/realtime-server/repopulate_workshops.js:214:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
