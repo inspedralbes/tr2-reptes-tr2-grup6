@@ -82,11 +82,30 @@ bash init-ssl.sh || {
 }
 
 # 6. Neteja i Desplegament
-echo -e "${YELLOW}🧹 Aturant contenidors antics...${NC}"
+echo -e "${YELLOW}🧹 Neteja agressiva: Alliberant ports (80, 443, 8000, 3306)...${NC}"
+
+# Funció per matar contenidors per port
+kill_port() {
+    local port=$1
+    # Busca contenidors que usin el port (sigui bind public o intern exposat)
+    ids=$(docker ps -q --filter "publish=$port")
+    if [ ! -z "$ids" ]; then
+        echo "   ⚠️  S'han trobat contenidors al port $port. Aturant: $ids"
+        echo "$ids" | xargs docker stop
+        echo "$ids" | xargs docker rm
+    fi
+}
+
+kill_port 80
+kill_port 443
+kill_port 8000
+kill_port 3306
+
+echo -e "${YELLOW}🧹 Aturant serveis del docker-compose actual...${NC}"
 docker compose down --remove-orphans || docker-compose down --remove-orphans
 
 echo -e "${YELLOW}🐳 Aixecant nous serveis de producció...${NC}"
-docker compose up -d --build || docker-compose up -d --build
+docker compose up -d --build
 
 echo -e "${GREEN}✅ Desplegament completat!${NC}"
 echo -e "🌍 Pots accedir a: https://<IP-DEL-SERVIDOR>"
