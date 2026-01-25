@@ -101,6 +101,17 @@ kill_port 443
 kill_port 8000
 kill_port 3306
 
+echo -e "${YELLOW}🧹 Aturant serveis del sistema que puguin ocupar ports (Apache/Nginx)...${NC}"
+systemctl stop apache2 2>/dev/null || true
+systemctl stop nginx 2>/dev/null || true
+
+# Intentar matar qualsevol procés que ocupi el port 80/443 (requereix psmisc, intentem instal·lar-ho)
+if ! command -v fuser &> /dev/null; then
+    apt-get install -y psmisc
+fi
+fuser -k 80/tcp 2>/dev/null || true
+fuser -k 443/tcp 2>/dev/null || true
+
 echo -e "${YELLOW}🧹 Aturant serveis del docker-compose actual...${NC}"
 docker compose down --remove-orphans || docker-compose down --remove-orphans
 
