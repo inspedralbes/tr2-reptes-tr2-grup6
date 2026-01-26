@@ -203,6 +203,24 @@ class AuthController {
             if ($stmt->execute([$input['email'], $input['full_name'], $passwordHash, $role, $center_id])) {
                 $userId = $this->db->lastInsertId();
                 
+                // Si el rol és 'teacher', crear automàticament un registre a la taula teachers
+                if ($role === 'teacher') {
+                    try {
+                        $teacherSql = "INSERT INTO teachers (user_id, name, email, speciality, status, created_at) 
+                                       VALUES (?, ?, ?, ?, 'active', NOW())";
+                        $teacherStmt = $this->db->prepare($teacherSql);
+                        $teacherStmt->execute([
+                            $userId,
+                            $input['full_name'],
+                            $input['email'],
+                            $input['speciality'] ?? 'General'
+                        ]);
+                    } catch (\Exception $e) {
+                        // Log l'error però no bloquejar el registre de l'usuari
+                        error_log("Error creant teacher: " . $e->getMessage());
+                    }
+                }
+                
                 http_response_code(201);
                 echo json_encode([
                     'success' => true,
